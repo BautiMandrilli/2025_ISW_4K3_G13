@@ -15,10 +15,13 @@
 **Curso:** 4K3  
 
 **Profesores del curso:**
-- Covaro, Laura — Adjunto  
-- Massano, Cecilia — Auxiliar de Trabajos Prácticos  
-- Garnero, Constanza — Auxiliar de Trabajos Prácticos  
-- Izaguirre, Ezequiel — Adscripto  
+
+| Apellido y nombre   | Rol                            |
+|---------------------|--------------------------------|
+| Covaro, Laura       | Adjunto                        |   
+| Massano, Cecilia    | Auxiliar de trabajos prácticos |  
+| Garnero, Constanza  | Auxiliar de trabajos prácticos |  
+| Izaguirre, Ezequiel | Adscripto                      |   
 
 **Número de grupo:** Grupo 13
 
