@@ -55,13 +55,15 @@ Contiene material de estudio y referencia teórica. Incluye:
 Contiene recursos de apoyo para el desarrollo práctico del curso. Incluye:
 
 - **`templates`**: Plantillas para trabajos o parciales.  
-- **`guias`**: Guías de ejercicios o instrucciones de trabajos prácticos.  
+- **`guias`**: Guías de ejercicios e instrucciones para trabajos prácticos y de investigación.  
 
 ### `entregas`
 Contiene los entregables del grupo. Incluye:
 
 - **`trabajos_investigacion`**: Carpetas para cada trabajo de investigación con sus archivos correspondientes.  
 - **`trabajos_practicos`**: Carpetas para cada trabajo práctico con sus archivos correspondientes.  
+
+A medida que vayamos avanzando en el transcurso de la materia iremos publicando los archivos relacionados con trabajos prácticos y de investigación en nuestro repositorio.
 
 ## Listado de ítems de configuración
 
@@ -74,7 +76,7 @@ Contiene los entregables del grupo. Incluye:
 | Material bibliográfico sobre Lean y Kanban                        | `<autor>_<aaaa>_<nombre_material>.<ext>`           | [Bibliografía — Lean y Kanban](teorico/bibliografia/lean_kanban)                                                                          |
 | Presentación de clase                                             | `<aaaa>_<nn>_<nombre_material>.<ext>`              | [Presentaciones](teorico/presentaciones)                                                                                                  |
 | Template para prácticos o parciales                               | `<aaaa>_<nombre_material>.<ext>`                   | [Templates](practico/templates)                                                                                                           |
-| Guía de ejercicios o trabajos prácticos                           | `<aaaa>_<nombre_material>.<ext>`                   | [Guías](practico/guias)                                                                                                                   |
+| Guía de ejercicios o trabajos                                     | `<aaaa>_<nombre_material>.<ext>`                   | [Guías](practico/guias)                                                                                                                   |
 | Trabajo de investigación                                          | `tp<nn>_4k3_g13_<nombre_tema>_<nombre_tipo>.<ext>` | [Trabajos de investigación](entregas/trabajos_investigacion)                                                                              |
 | Trabajo práctico                                                  | `tp<nn>_4k3_g13_<nombre_tema>_<nombre_tipo>.<ext>` | [Trabajos prácticos](entregas/trabajos_practicos)                                                                                         |
 
