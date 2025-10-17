@@ -87,11 +87,7 @@ Esto significa que la línea se establecerá antes de la finalización de la fec
 
 **Regla de nombrado:**  `linea_base_tp<nn>`
 
-## Historial de líneas base
-
-## Registro de Líneas Base
-
-## Registro de Líneas Base
+## Historial de marcado de líneas base
 
 | Fecha de Definición | Autor de la Definición | Descripción de la Línea Base |
 |--------------------|-----------------------|-----------------------------|
