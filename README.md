@@ -82,10 +82,23 @@ A medida que vayamos avanzando en el transcurso de la materia iremos publicando 
 
 ## Definición de línea base
 
-La línea base del proyecto se definirá una vez incorporadas las observaciones de las profesoras y realizados los ajustes correspondientes.  
-Cuando estas correcciones sean implementadas y validadas, la línea base quedará oficialmente establecida, funcionando como referencia para las evaluaciones posteriores y el seguimiento del avance del proyecto.
+La línea base del proyecto se definirá una vez se entreguen los trabajos prácticos evaluables.
+Esto significa que la línea se establecerá antes de la finalización de la fecha de entrega de cada trabajo práctico evaluable, por lo que las correcciones o ajustes posteriores identificados en cada trabajo solo podrán implementarse en la línea base de la entrega siguiente, asegurando que cada línea base permanezca estable y controlada.
 
-**Regla de nombrado:**  `linea_base_<nn>_<hito>`
+**Regla de nombrado:**  `linea_base_tp<nn>`
+
+## Historial de líneas base
+
+## Registro de Líneas Base
+
+## Registro de Líneas Base
+
+| Fecha de Definición | Autor de la Definición | Descripción de la Línea Base |
+|--------------------|-----------------------|-----------------------------|
+| 2025-10-17         | Milagro Brizuela      | Línea base del TP4. |
+
+**Nota:**  
+La línea base del TP4 constituye una excepción al criterio actual. Inicialmente, se trabajó con un procedimiento de marcado de líneas base posterior a la fecha de finalización de la entrega de cada trabajo, pero posteriormente se decidió redefinir dicho criterio. A partir de los siguientes trabajos, todas las líneas base se marcarán antes de la finalización de la fecha de entrega de cada trabajo práctico evaluable.
 
 ## Listado de etiquetas en las reglas de nombrado
 
