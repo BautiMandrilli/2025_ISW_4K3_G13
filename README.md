@@ -90,8 +90,8 @@ Esto significa que la línea se establecerá antes de la finalización de la fec
 
 **Comandos para marcar la línea base:**
 
-1. Crear la línea base: git tag -a linea_base_tp<nn> -m "Línea base del TP<nn>"
-2. Subir la línea base al repositorio remoto: git push origin linea_base_tp<nn>
+1. Crear la línea base: `git tag -a linea_base_tp<nn> -m "Línea base del TP<nn>"`
+2. Subir la línea base al repositorio remoto: `git push origin linea_base_tp<nn>`
 
 ## Historial de marcado de líneas base
 
