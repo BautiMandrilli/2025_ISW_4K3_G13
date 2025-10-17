@@ -86,7 +86,12 @@ A medida que vayamos avanzando en el transcurso de la materia iremos publicando 
 La línea base del proyecto se definirá una vez se entreguen los trabajos prácticos evaluables.
 Esto significa que la línea se establecerá antes de la finalización de la fecha de entrega de cada trabajo práctico evaluable, por lo que las correcciones o ajustes posteriores identificados en cada trabajo solo podrán implementarse en la línea base de la entrega siguiente, asegurando que cada línea base permanezca estable y controlada.
 
-**Regla de nombrado:**  `linea_base_tp<nn>`
+**Regla de nombrado de la línea base:**  `linea_base_tp<nn>`
+
+**Comandos para marcar la línea base:**
+
+1. Crear la línea base: git tag -a linea_base_tp<nn> -m "Línea base del TP<nn>"
+2. Subir la línea base al repositorio remoto: git push origin linea_base_tp<nn>
 
 ## Historial de marcado de líneas base
 
