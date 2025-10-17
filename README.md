@@ -6,6 +6,7 @@
 - [Estructura del repositorio](#estructura-del-repositorio)
 - [Listado de ítems de configuración](#listado-de-ítems-de-configuración)
 - [Definición de línea base](#definición-de-línea-base)
+- [Historial de marcado de líneas base](#historial-de-marcado-de-líneas-base)
 - [Listado de etiquetas en las reglas de nombrado](#listado-de-etiquetas-en-las-reglas-de-nombrado)
 
 ## Información general
@@ -93,8 +94,7 @@ Esto significa que la línea se establecerá antes de la finalización de la fec
 |--------------------|-----------------------|-----------------------------|
 | 2025-10-17         | Milagro Brizuela      | Línea base del TP4. |
 
-**Nota:**  
-La línea base del TP4 constituye una excepción al criterio actual. Inicialmente, se trabajó con un procedimiento de marcado de líneas base posterior a la fecha de finalización de la entrega de cada trabajo, pero posteriormente se decidió redefinir dicho criterio. A partir de los siguientes trabajos, todas las líneas base se marcarán antes de la finalización de la fecha de entrega de cada trabajo práctico evaluable.
+**Nota:**  La línea base del TP4 constituye una excepción al criterio actual. Inicialmente, se trabajó con un procedimiento de marcado de líneas base posterior a la fecha de finalización de la entrega de cada trabajo, pero posteriormente se decidió redefinir dicho criterio. A partir de los siguientes trabajos, todas las líneas base se marcarán antes de la finalización de la fecha de entrega de cada trabajo práctico evaluable.
 
 ## Listado de etiquetas en las reglas de nombrado
 
