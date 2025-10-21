@@ -28,7 +28,8 @@ db.serialize(() => {
       nombre TEXT NOT NULL,
       fecha_uso_entrada TEXT NOT NULL,
       email TEXT NOT NULL,
-      tipo TEXT NOT NULL DEFAULT 'general'
+      edad INTEGER NOT NULL,
+      tipo TEXT NOT NULL DEFAULT 'regular'
     )
   `);
 });

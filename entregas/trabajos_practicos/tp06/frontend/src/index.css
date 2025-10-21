@@ -1,0 +1,13 @@
+body {
+  background-image: url('./imagenes/ecopark.jpg');
+  
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  
+  padding: 40px 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  font-family: Arial, sans-serif;
+}
