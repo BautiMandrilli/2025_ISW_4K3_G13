@@ -20,8 +20,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-// Crear tabla si no existe
+// Crear tablas si no existen
 db.serialize(() => {
+  // Tabla de entradas (existente)
   db.run(`
     CREATE TABLE IF NOT EXISTS entradas (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,6 +31,17 @@ db.serialize(() => {
       email TEXT NOT NULL,
       edad INTEGER NOT NULL,
       tipo TEXT NOT NULL DEFAULT 'regular'
+    )
+  `);
+  
+  // Nueva tabla de usuarios para autenticación
+  db.run(`
+    CREATE TABLE IF NOT EXISTS usuarios (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
 });

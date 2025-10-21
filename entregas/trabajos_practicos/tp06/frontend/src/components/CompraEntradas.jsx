@@ -246,10 +246,6 @@ function CompraEntradas() {
         </div>
       ) : (
         <>
-          <div className="brand-header" aria-label="Eco park header">
-            <div className="brand-emoji" aria-hidden>🌳</div>
-            <h1 className="brand-title">Eco park</h1>
-          </div>
           <h2>Comprar Entradas</h2>
           <div className="field">
             <label htmlFor="email">Correo del comprador</label>
