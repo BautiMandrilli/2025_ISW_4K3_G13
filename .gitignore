@@ -1,2 +1,16 @@
 # Archivos de sistema
 .DS_Store
+
+# Directorios de dependencias de Node.js
+# Esto ignora cualquier carpeta llamada 'node_modules' en cualquier subdirectorio
+node_modules/ 
+
+# Archivos de bloqueo de dependencias (se regeneran solos)
+package-lock.json 
+
+# Archivos de configuración de entorno
+.env
+
+# Directorios de build
+dist/
+build/
