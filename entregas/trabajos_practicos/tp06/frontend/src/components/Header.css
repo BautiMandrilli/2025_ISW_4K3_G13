@@ -1,24 +1,32 @@
 /* Header Component Styles */
+
 .app-header {
   background: linear-gradient(135deg, #2c5530 0%, #1a3a1d 100%);
   color: white;
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 100;
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 32px;
+  min-height: 64px;
 }
 
 .brand-section {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .brand-section .brand-emoji {
@@ -35,7 +43,7 @@
 .user-section {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
 }
 
 .welcome-text {
@@ -66,34 +74,33 @@
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
+
+@media (max-width: 900px) {
   .header-content {
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     text-align: center;
+    padding: 0 10px;
   }
-  
   .user-section {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
-  
   .brand-section .brand-title {
     font-size: 20px;
   }
 }
 
+
 @media (max-width: 480px) {
   .header-content {
-    padding: 0 10px;
+    padding: 0 4px;
   }
-  
   .welcome-text {
-    font-size: 12px;
+    font-size: 11px;
   }
-  
   .logout-button {
-    font-size: 12px;
-    padding: 6px 12px;
+    font-size: 11px;
+    padding: 5px 10px;
   }
 }
