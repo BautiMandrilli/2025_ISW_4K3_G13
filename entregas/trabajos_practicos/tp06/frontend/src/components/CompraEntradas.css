@@ -286,21 +286,31 @@
 }
 
 
+.mp-pagina-simulacion .boton-cancelar-mp,
+.reserva-modal .boton-cancelar-mp,
 .boton-cancelar-mp {
-  background-color: transparent;
-  color: #009EE3;
-  border: none;
-  padding: 10px;
-  font-size: 14px;
+  background-color: #c0392b; /* fondo rojo */
+  color: #fff; /* texto blanco */
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  margin-top: 10px;
-  width: auto;
+  width: 100%;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.mp-pagina-simulacion .boton-cancelar-mp:hover,
+.reserva-modal .boton-cancelar-mp:hover,
+.boton-cancelar-mp:hover {
+  background-color: #992724;
 }
 
 .boton-cancelar-mp:disabled {
-  color: #a9a9a9;
+  color: #fff;
+  background-color: #a9a9a9;
   cursor: not-allowed;
-  background-color: transparent;
 }
 
 

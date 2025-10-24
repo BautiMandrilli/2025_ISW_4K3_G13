@@ -19,6 +19,7 @@ function CompraEntradas() {
   // const [formaPago, setFormaPago] = useState("efectivo");
   const [formaPago, setFormaPago] = useState(""); // No hay valor por defecto
   const [mostrarSimulacion, setMostrarSimulacion] = useState(false);
+  const [mostrarReserva, setMostrarReserva] = useState(false);
   const [cantidad, setCantidad] = useState("1");
   const [entradas, setEntradas] = useState([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
   const [loading, setLoading] = useState(false);
@@ -159,6 +160,12 @@ function CompraEntradas() {
       return;
     }
 
+    if (formaPago === "efectivo") {
+      // Mostrar modal de reserva antes de confirmar el registro en backend
+      setMostrarReserva(true);
+      return;
+    }
+
     setLoading(true);
     setSuccess("");
     try {
@@ -202,6 +209,34 @@ function CompraEntradas() {
     setLoading(false);
   };
 
+  const handleConfirmarReserva = async () => {
+    // Confirma la reserva para pago en boletería: registra las entradas en backend
+    if (!validateForm()) {
+      setMostrarReserva(false);
+      return;
+    }
+
+    setLoading(true);
+    setSuccess("");
+    setErrorGlobal("");
+    try {
+      await axios.post("http://localhost:5000/api/entradas", { entradas, email: user.email });
+      setMostrarReserva(false);
+      setSuccess("Reserva registrada. Deberá abonar el dinero en boletería.");
+      // limpiar formulario
+      setCantidad("1");
+      setEntradas([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
+      setFormaPago("efectivo");
+      setFieldErrors({});
+      // opcional: mostrar mensaje corto
+      setTimeout(() => setSuccess(""), 7000);
+    } catch (error) {
+      const errorMsg = error?.response?.data?.error || 'Error al procesar la reserva';
+      setErrorGlobal(errorMsg);
+    }
+    setLoading(false);
+  };
+
 
   return (
     <div className="compra-container">
@@ -226,6 +261,8 @@ function CompraEntradas() {
               {entradas.map((e, idx) => (
                 <li key={idx}>
                   <strong>{e.nombre}</strong> ({e.tipo}) - ${calcularPrecio(e.edad, e.tipo)}
+                  <br />
+                  <small>Fecha: {e.fecha_uso}</small>
                 </li>
               ))}
             </ul>
@@ -243,6 +280,47 @@ function CompraEntradas() {
               className="boton-cancelar-mp"
               onClick={() => {
                 setMostrarSimulacion(false);
+                setErrorGlobal("");
+                setFieldErrors({});
+              }}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+            {errorGlobal && <p className="error-message-modal">{errorGlobal}</p>}
+          </div>
+        </div>
+      ) : mostrarReserva ? (
+        <div className="reserva-modal">
+          <div className="modal-header">
+            <h3>Reserva de boleto</h3>
+          </div>
+          <div className="modal-body">
+            <p>Su boleto ha sido reservado. Deberá abonar el dinero en efectivo en boletería.</p>
+            <p>Resumen de compra:</p>
+            <ul className="modal-resumen-lista">
+              {entradas.map((e, idx) => (
+                  <li key={idx}>
+                    <strong>{e.nombre}</strong> ({e.tipo}) - ${calcularPrecio(e.edad, e.tipo)}
+                    <br />
+                    <small>Fecha: {e.fecha_uso}</small>
+                  </li>
+                ))}
+            </ul>
+            <p className="modal-total">
+              <strong>Total a pagar: ${entradas.reduce((acc, e) => acc + calcularPrecio(e.edad, e.tipo), 0)}</strong>
+            </p>
+            <button
+              className="boton-confirmar-reserva"
+              onClick={handleConfirmarReserva}
+              disabled={loading}
+            >
+              {loading ? "Procesando..." : "Confirmar Reserva"}
+            </button>
+            <button
+              className="boton-cancelar-mp"
+              onClick={() => {
+                setMostrarReserva(false);
                 setErrorGlobal("");
                 setFieldErrors({});
               }}
