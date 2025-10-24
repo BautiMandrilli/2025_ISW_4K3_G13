@@ -1,7 +1,11 @@
 .radio-group.horizontal {
   display: flex;
-  gap: 24px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
   margin-bottom: 10px;
+  margin-top: 8px;
 }
 .radio-group.horizontal label {
   display: flex;
@@ -9,13 +13,19 @@
   font-weight: normal;
   background: #f2f6fa;
   border-radius: 6px;
-  padding: 4px 10px;
-  border: 1px solid #dbeafe;
+  padding: 8px 18px;
+  border: 1.5px solid #b2bec3;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s;
+  font-size: 15px;
+  min-width: 180px;
+  justify-content: center;
 }
 .radio-group.horizontal input[type="radio"] {
-  margin-right: 8px;
+  margin-right: 10px;
+  accent-color: #3498db;
+  width: 18px;
+  height: 18px;
 }
 
 .select-tipo-pase {

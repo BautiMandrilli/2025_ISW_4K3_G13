@@ -1,11 +1,21 @@
 /* Auth Components Styles */
 .auth-container {
   min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0;
+  margin: 0;
+  overflow: hidden; /* Evita scroll */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 .auth-card {
@@ -16,6 +26,12 @@
   width: 100%;
   max-width: 400px;
   text-align: center;
+  margin: 0 auto;
+  /* Centrado vertical y horizontal garantizado por el contenedor padre */
+  box-sizing: border-box;
+  /* Evita que el contenido desborde en pantallas chicas */
+  max-height: 95vh;
+  overflow-y: auto;
 }
 
 .brand-header {
@@ -151,11 +167,12 @@
 /* Responsive design */
 @media (max-width: 480px) {
   .auth-container {
-    padding: 10px;
+    padding: 0;
   }
-  
   .auth-card {
-    padding: 30px 20px;
+    padding: 30px 8px;
+    max-width: 98vw;
+    max-height: 98vh;
   }
   
   .brand-title {

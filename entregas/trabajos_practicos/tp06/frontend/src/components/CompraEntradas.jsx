@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./CompraEntradas.css";
 import "./Toast.css";
+import { useAuth } from "../context/AuthContext";
 
 function CompraEntradas() {
   // Precios
@@ -14,11 +15,12 @@ function CompraEntradas() {
     if (parseInt(edad) < 15 || parseInt(edad) >= 60) return base / 2;
     return base;
   }
-  const [formaPago, setFormaPago] = useState("efectivo");
+  const { user } = useAuth();
+  // const [formaPago, setFormaPago] = useState("efectivo");
+  const [formaPago, setFormaPago] = useState(""); // No hay valor por defecto
   const [mostrarSimulacion, setMostrarSimulacion] = useState(false);
   const [cantidad, setCantidad] = useState("1");
   const [entradas, setEntradas] = useState([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
-  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const MAX_ENTRADAS = 10;
@@ -78,7 +80,6 @@ function CompraEntradas() {
   };
 
   const resetForm = () => {
-    setEmail("");
     setCantidad("1");
     setEntradas([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
     setFormaPago("efectivo");
@@ -91,11 +92,9 @@ function CompraEntradas() {
     const fechasNoPermitidas = ["12-25", "01-01"];
     const diasAbiertos = [0, 2, 3, 4, 5, 6];
 
-    // 1. Validar Email
-    if (!email) {
-      newErrors.email = "Debes ingresar un correo electrónico.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "El formato del correo no es válido.";
+    // 1. Validar Email (ya no se pide, pero validamos que user.email exista)
+    if (!user?.email) {
+      newErrors.email = "No se detectó un correo de usuario autenticado.";
     }
 
     // 2. Validar Cantidad
@@ -121,17 +120,28 @@ function CompraEntradas() {
         if (isNaN(fecha.getTime())) {
           newErrors[`entrada_${i}_fecha_uso`] = "La fecha no es válida";
         } else {
+          // Validar fecha pasada
+          const hoy = new Date();
+          hoy.setHours(0,0,0,0);
+          if (fecha < hoy) {
+            newErrors[`entrada_${i}_fecha_uso`] = "No se puede seleccionar una fecha pasada";
+          }
           const mmdd = entrada.fecha_uso.slice(5);
           if (fechasNoPermitidas.includes(mmdd)) {
-            newErrors[`entrada_${i}_fecha_uso`] = `La fecha ${entrada.fecha_uso} no está permitida`;
+            newErrors[`entrada_${i}_fecha_uso`] = `El parque esta cerrado el dia ${entrada.fecha_uso}`;
           }
           const diaSemana = fecha.getDay();
           if (!diasAbiertos.includes(diaSemana)) {
-            newErrors[`entrada_${i}_fecha_uso`] = "El parque está cerrado ese día";
+            newErrors[`entrada_${i}_fecha_uso`] = "El parque está cerrado los lunes";
           }
         }
       }
     });
+
+    // Validar forma de pago
+    if (!formaPago) {
+      newErrors.formaPago = "Debes seleccionar una forma de pago.";
+    }
 
     setFieldErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -152,7 +162,7 @@ function CompraEntradas() {
     setLoading(true);
     setSuccess("");
     try {
-      await axios.post("http://localhost:5000/api/entradas", { entradas, email });
+      await axios.post("http://localhost:5000/api/entradas", { entradas, email: user.email }); // usar user.email
       setSuccess("Compra registrada y mail enviado!");
       resetForm();
     } catch (error) {
@@ -171,7 +181,7 @@ function CompraEntradas() {
     setSuccess("");
     setErrorGlobal("");
     try {
-      await axios.post("http://localhost:5000/api/entradas", { entradas, email });
+      await axios.post("http://localhost:5000/api/entradas", { entradas, email: user.email }); // usar user.email
       setMostrarSimulacion(false);
       setPagoExitoso(true);
       
@@ -180,7 +190,6 @@ function CompraEntradas() {
       }, 5000);
 
       
-      setEmail("");
       setCantidad("1");
       setEntradas([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
       setFormaPago("efectivo");
@@ -247,48 +256,30 @@ function CompraEntradas() {
       ) : (
         <>
           <h2>Comprar Entradas</h2>
+
           <div className="field">
-            <label htmlFor="email">Correo del comprador</label>
+            <label>Correo del comprador</label>
             <input
-              id="email"
               type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (fieldErrors.email) {
-                  setFieldErrors(prev => ({ ...prev, email: undefined }));
-                }
-              }}
-              placeholder="ejemplo@correo.com"
-              className={fieldErrors.email ? 'input-error' : ''}
+              value={user?.email || ""}
+              disabled
+              readOnly
+              style={{ background: "#f5f5f5", color: "#888" }}
             />
-            {fieldErrors.email && <p className="error-message-field">{fieldErrors.email}</p>}
           </div>
 
           <div className="field">
             <label>Forma de pago</label>
-            <div className="radio-group horizontal">
-              <label>
-                <input
-                  type="radio"
-                  name="formaPago"
-                  value="efectivo"
-                  checked={formaPago === "efectivo"}
-                  onChange={e => setFormaPago(e.target.value)}
-                />
-                Efectivo (boletería)
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="formaPago"
-                  value="tarjeta"
-                  checked={formaPago === "tarjeta"}
-                  onChange={e => setFormaPago(e.target.value)}
-                />
-                Tarjeta de crédito (Mercado Pago)
-              </label>
-            </div>
+            <select
+              className="select-tipo-pase"
+              value={formaPago}
+              onChange={e => setFormaPago(e.target.value)}
+            >
+              <option value="" disabled>Seleccionar forma de pago</option>
+              <option value="efectivo">Efectivo (boletería)</option>
+              <option value="tarjeta">Tarjeta de crédito (Mercado Pago)</option>
+            </select>
+            {fieldErrors.formaPago && <p className="error-message-field">{fieldErrors.formaPago}</p>}
           </div>
 
           <div className="field">

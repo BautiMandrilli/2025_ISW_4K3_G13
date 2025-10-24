@@ -169,8 +169,10 @@ app.get("/api/auth/profile", verifyToken, (req, res) => {
 // Endpoint para registrar entradas (protegido)
 app.post("/api/entradas", verifyToken, async (req, res) => {
   console.log("💡 Llega request:", req.body);
-  const { entradas, email } = req.body;
+  const { entradas } = req.body;
+  const email = req.user.email;
   const MAX_ENTRADAS = 10;
+
   // Validaciones básicas
   if (!entradas || !Array.isArray(entradas) || entradas.length === 0) {
     return res.status(400).json({ error: "Datos incompletos: no hay entradas" });
@@ -189,6 +191,7 @@ app.post("/api/entradas", verifyToken, async (req, res) => {
   // Validar cada entrada
   const dateRe = /^\d{4}-\d{2}-\d{2}$/;
   const missing = [];
+  const fechasNoPermitidas = ["12-25", "01-01"];
   entradas.forEach((e, i) => {
     if (!e || typeof e !== 'object') missing.push(`Entrada ${i+1}: estructura inválida`);
     else {
@@ -196,10 +199,32 @@ app.post("/api/entradas", verifyToken, async (req, res) => {
       if (!e.fecha_uso || !dateRe.test(String(e.fecha_uso))) missing.push(`Entrada ${i+1}: fecha inválida (usar YYYY-MM-DD)`);
       if (!e.edad || isNaN(parseInt(e.edad))) missing.push(`Entrada ${i+1}: falta edad válida`);
       if (!e.tipo || (e.tipo !== "vip" && e.tipo !== "regular")) missing.push(`Entrada ${i+1}: falta tipo de pase`);
+      // Validar fecha: no lunes, no navidad, no año nuevo, no pasada
+      if (e.fecha_uso && dateRe.test(String(e.fecha_uso))) {
+        const fecha = new Date(e.fecha_uso + "T00:00:00");
+        const hoy = new Date();
+        hoy.setHours(0,0,0,0);
+        if (fecha < hoy) missing.push(`Entrada ${i+1}: no se puede seleccionar una fecha pasada`);
+        const mmdd = e.fecha_uso.slice(5);
+        if (fechasNoPermitidas.includes(mmdd)) missing.push(`Entrada ${i+1}: el parque está cerrado el día ${e.fecha_uso}`);
+        const diaSemana = fecha.getDay();
+        if (diaSemana === 1) missing.push(`Entrada ${i+1}: el parque está cerrado los lunes`);
+      }
     }
   });
   if (missing.length) {
     return res.status(400).json({ error: missing.join(' · ') });
+  }
+
+  // Función para calcular precio según reglas
+  function calcularPrecio(edad, tipo) {
+    const PRECIO_REGULAR = 5000;
+    const PRECIO_VIP = 10000;
+    edad = parseInt(edad);
+    if (edad < 3) return 0;
+    let base = tipo === "vip" ? PRECIO_VIP : PRECIO_REGULAR;
+    if (edad < 15 || edad >= 60) return base / 2;
+    return base;
   }
 
   const runInsert = (entrada) => new Promise((resolve, reject) => {
@@ -225,7 +250,23 @@ app.post("/api/entradas", verifyToken, async (req, res) => {
   }
 
   try {
-    console.log("Enviando mail a:", email);
+    // Armar resumen con precios
+    let total = 0;
+    const resumenEntradas = entradas.map((e, index) => {
+      const codigoEntrada = insertedIds[index];
+      const precio = calcularPrecio(e.edad, e.tipo);
+      total += precio;
+      return (`
+        <li style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+          <strong>Código de entrada: ${codigoEntrada}</strong><br>
+          Nombre: ${e.nombre}<br>
+          Fecha de uso: ${e.fecha_uso}<br>
+          Edad: ${e.edad}<br>
+          Pase: ${e.tipo.toUpperCase()}<br>
+          Precio: $${precio}
+        </li>
+      `);
+    }).join("");
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
@@ -233,28 +274,15 @@ app.post("/api/entradas", verifyToken, async (req, res) => {
       html: `<h2>Compra exitosa</h2>
               <p>Gracias por tu compra. Las entradas registradas son:</p>
               <ul>
-              ${entradas.map((e, index) => {
-                const codigoEntrada = insertedIds[index];
-                
-                return (`
-                  <li style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                    <strong>Código de entrada: ${codigoEntrada}</strong><br>
-                    Nombre: ${e.nombre}<br>
-                    Fecha de uso: ${e.fecha_uso}<br>
-                    Edad: ${e.edad}<br>
-                    Pase: ${e.tipo.toUpperCase()}
-                  </li>
-                `);
-              }).join("")}
-              </ul>`,
+              ${resumenEntradas}
+              </ul>
+              <p><strong>Total pagado: $${total}</strong></p>`,
     });
     
     res.json({ message: "Compra registrada y mail enviado correctamente", ids: insertedIds });
 
   } catch (mailError) {
-    
     console.error("Error al enviar el mail (pero la compra SÍ se guardó):", mailError);
-    
     res.json({ 
       message: "Compra registrada (pero hubo un problema al enviar el mail)", 
       ids: insertedIds 
