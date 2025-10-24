@@ -195,10 +195,15 @@ app.post("/api/entradas", verifyToken, async (req, res) => {
   entradas.forEach((e, i) => {
     if (!e || typeof e !== 'object') missing.push(`Entrada ${i+1}: estructura inválida`);
     else {
-      if (!e.nombre || !String(e.nombre).trim()) missing.push(`Entrada ${i+1}: falta nombre`);
-      if (!e.fecha_uso || !dateRe.test(String(e.fecha_uso))) missing.push(`Entrada ${i+1}: fecha inválida (usar YYYY-MM-DD)`);
-      if (!e.edad || isNaN(parseInt(e.edad))) missing.push(`Entrada ${i+1}: falta edad válida`);
-      if (!e.tipo || (e.tipo !== "vip" && e.tipo !== "regular")) missing.push(`Entrada ${i+1}: falta tipo de pase`);
+        if (!e.nombre || !String(e.nombre).trim()) missing.push(`Entrada ${i+1}: falta nombre`);
+        if (!e.fecha_uso || !dateRe.test(String(e.fecha_uso))) missing.push(`Entrada ${i+1}: fecha inválida (usar YYYY-MM-DD)`);
+        const edadNum = parseInt(e.edad);
+        if (e.edad === undefined || e.edad === null || String(e.edad).trim() === "" || isNaN(edadNum)) {
+          missing.push(`Entrada ${i+1}: falta edad válida`);
+        } else if (edadNum <= 0) {
+          missing.push(`Entrada ${i+1}: la edad debe ser mayor a 0`);
+        }
+        if (!e.tipo || (e.tipo !== "vip" && e.tipo !== "regular")) missing.push(`Entrada ${i+1}: falta tipo de pase`);
       // Validar fecha: no lunes, no navidad, no año nuevo, no pasada
       if (e.fecha_uso && dateRe.test(String(e.fecha_uso))) {
         const fecha = new Date(e.fecha_uso + "T00:00:00");
