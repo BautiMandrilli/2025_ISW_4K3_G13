@@ -5,6 +5,9 @@ import "./Toast.css";
 import { useAuth } from "../context/AuthContext";
 
 function CompraEntradas() {
+  // Mensaje personalizado para animación de éxito
+  const [showSuccessAnim, setShowSuccessAnim] = useState(false);
+  const [successAnimMsg, setSuccessAnimMsg] = useState("");
   // Precios
   const PRECIO_REGULAR = 5000;
   const PRECIO_VIP = 10000;
@@ -161,7 +164,6 @@ function CompraEntradas() {
     }
 
     if (formaPago === "efectivo") {
-      // Mostrar modal de reserva antes de confirmar el registro en backend
       setMostrarReserva(true);
       return;
     }
@@ -191,10 +193,13 @@ function CompraEntradas() {
       await axios.post("http://localhost:5000/api/entradas", { entradas, email: user.email }); // usar user.email
       setMostrarSimulacion(false);
       setPagoExitoso(true);
-      
+      setShowSuccessAnim(true);
+      setSuccessAnimMsg("Revisá tu correo electrónico con la información de las entradas.");
       setTimeout(() => {
         setPagoExitoso(false);
-      }, 5000);
+        setShowSuccessAnim(false);
+        setSuccessAnimMsg("");
+  }, 5000);
 
       
       setCantidad("1");
@@ -210,7 +215,6 @@ function CompraEntradas() {
   };
 
   const handleConfirmarReserva = async () => {
-    // Confirma la reserva para pago en boletería: registra las entradas en backend
     if (!validateForm()) {
       setMostrarReserva(false);
       return;
@@ -222,14 +226,19 @@ function CompraEntradas() {
     try {
       await axios.post("http://localhost:5000/api/entradas", { entradas, email: user.email });
       setMostrarReserva(false);
-      setSuccess("Reserva registrada. Deberá abonar el dinero en boletería.");
-      // limpiar formulario
+      setSuccess("");
+      setPagoExitoso(true);
+      setShowSuccessAnim(true);
+      setSuccessAnimMsg("Debés pasar por boletería para abonar y retirar tus entradas.");
       setCantidad("1");
       setEntradas([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
       setFormaPago("efectivo");
       setFieldErrors({});
-      // opcional: mostrar mensaje corto
-      setTimeout(() => setSuccess(""), 7000);
+      setTimeout(() => {
+        setPagoExitoso(false);
+        setShowSuccessAnim(false);
+        setSuccessAnimMsg("");
+      }, 3000);
     } catch (error) {
       const errorMsg = error?.response?.data?.error || 'Error al procesar la reserva';
       setErrorGlobal(errorMsg);
@@ -240,13 +249,29 @@ function CompraEntradas() {
 
   return (
     <div className="compra-container">
-      
-      {pagoExitoso && (
-        <div className="mensaje-exito-visible">
-          <p>¡Listo! Tu pago se realizó con éxito.</p>
+      {showSuccessAnim && (
+        <div className="ml-success-overlay">
+          <div className="ml-checkmark">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="38" fill="#fff" stroke="#2ecc40" strokeWidth="4" />
+              <polyline
+                className="ml-checkmark-path"
+                points="24,44 37,57 58,32"
+                fill="none"
+                stroke="#2ecc40"
+                strokeWidth="7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <div className="ml-success-content">
+            <h1>¡Compra realizada con éxito!</h1>
+            <p>{successAnimMsg}</p>
+          </div>
         </div>
       )}
-      
+      {/* El resto del render se mantiene igual, pero el bloque de success/reserva ya no se muestra */}
       {mostrarSimulacion ? (
         <div className="mp-pagina-simulacion"> 
           <div className="modal-header">
@@ -256,17 +281,30 @@ function CompraEntradas() {
             />
           </div>
           <div className="modal-body">
-            <p>Resumen de compra:</p>
-            <ul className="modal-resumen-lista">
-              {entradas.map((e, idx) => (
-                <li key={idx}>
-                  <strong>{e.nombre}</strong> ({e.tipo}) - ${calcularPrecio(e.edad, e.tipo)}
-                  <br />
-                  <small>Fecha: {e.fecha_uso}</small>
-                </li>
-              ))}
-            </ul>
-            <p className="modal-total">
+            <p style={{marginBottom:'12px'}}>Resumen de compra con Mercado Pago:</p>
+            <table style={{width:'100%', borderCollapse:'collapse', marginBottom:'16px'}}>
+              <thead>
+                <tr style={{background:'#f2f6fa'}}>
+                  <th style={{padding:'6px', borderRadius:'4px'}}>Nombre</th>
+                  <th style={{padding:'6px'}}>Tipo</th>
+                  <th style={{padding:'6px'}}>Edad</th>
+                  <th style={{padding:'6px'}}>Fecha</th>
+                  <th style={{padding:'6px'}}>Precio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {entradas.map((e, idx) => (
+                  <tr key={idx} style={{textAlign:'center', background: idx%2===0?'#fff':'#f9f9f9'}}>
+                    <td style={{padding:'6px'}}>{e.nombre}</td>
+                    <td style={{padding:'6px'}}>{e.tipo}</td>
+                    <td style={{padding:'6px'}}>{e.edad}</td>
+                    <td style={{padding:'6px'}}>{e.fecha_uso}</td>
+                    <td style={{padding:'6px', fontWeight:'bold'}}>${calcularPrecio(e.edad, e.tipo)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="modal-total" style={{marginTop:'24px', fontSize:'1.1em', textAlign:'right'}}>
               <strong>Total a pagar: ${entradas.reduce((acc, e) => acc + calcularPrecio(e.edad, e.tipo), 0)}</strong>
             </p>
             <button 
@@ -276,58 +314,75 @@ function CompraEntradas() {
             >
               {loading ? "Procesando..." : "Finalizar Pago"}
             </button>
-            <button 
-              className="boton-cancelar-mp"
-              onClick={() => {
-                setMostrarSimulacion(false);
-                setErrorGlobal("");
-                setFieldErrors({});
-              }}
-              disabled={loading}
-            >
-              Cancelar
-            </button>
+              <button 
+                className="boton-cancelar-mp"
+                style={{backgroundColor:'#c0392b', color:'#fff'}}
+                onClick={() => {
+                  setMostrarSimulacion(false);
+                  setErrorGlobal("");
+                  setFieldErrors({});
+                }}
+                disabled={loading}
+              >
+                Cancelar
+              </button>
             {errorGlobal && <p className="error-message-modal">{errorGlobal}</p>}
           </div>
         </div>
       ) : mostrarReserva ? (
         <div className="reserva-modal">
-          <div className="modal-header">
-            <h3>Reserva de boleto</h3>
+          <div className="modal-header" style={{justifyContent:'center'}}>
+            <span style={{fontWeight: 'bold', fontSize: '1.2rem'}}>Resumen de Reserva</span>
           </div>
           <div className="modal-body">
-            <p>Su boleto ha sido reservado. Deberá abonar el dinero en efectivo en boletería.</p>
-            <p>Resumen de compra:</p>
-            <ul className="modal-resumen-lista">
-              {entradas.map((e, idx) => (
-                  <li key={idx}>
-                    <strong>{e.nombre}</strong> ({e.tipo}) - ${calcularPrecio(e.edad, e.tipo)}
-                    <br />
-                    <small>Fecha: {e.fecha_uso}</small>
-                  </li>
+            <p style={{marginBottom:'12px'}}>Su boleto ha sido reservado. Deberá abonar el dinero en efectivo en boletería.</p>
+            <table style={{width:'100%', borderCollapse:'collapse', marginBottom:'16px'}}>
+              <thead>
+                <tr style={{background:'#f2f6fa'}}>
+                  <th style={{padding:'6px', borderRadius:'4px'}}>Nombre</th>
+                  <th style={{padding:'6px'}}>Tipo</th>
+                  <th style={{padding:'6px'}}>Edad</th>
+                  <th style={{padding:'6px'}}>Fecha</th>
+                  <th style={{padding:'6px'}}>Precio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {entradas.map((e, idx) => (
+                  <tr key={idx} style={{textAlign:'center', background: idx%2===0?'#fff':'#f9f9f9'}}>
+                    <td style={{padding:'6px'}}>{e.nombre}</td>
+                    <td style={{padding:'6px'}}>{e.tipo}</td>
+                    <td style={{padding:'6px'}}>{e.edad}</td>
+                    <td style={{padding:'6px'}}>{e.fecha_uso}</td>
+                    <td style={{padding:'6px', fontWeight:'bold'}}>${calcularPrecio(e.edad, e.tipo)}</td>
+                  </tr>
                 ))}
-            </ul>
-            <p className="modal-total">
-              <strong>Total a pagar: ${entradas.reduce((acc, e) => acc + calcularPrecio(e.edad, e.tipo), 0)}</strong>
+              </tbody>
+            </table>
+            <p className="modal-total" style={{marginTop:'24px', fontSize:'1.1em', textAlign:'right'}}>
+              <strong>Total a abonar: ${entradas.reduce((acc, e) => acc + calcularPrecio(e.edad, e.tipo), 0)}</strong>
             </p>
-            <button
-              className="boton-confirmar-reserva"
-              onClick={handleConfirmarReserva}
-              disabled={loading}
-            >
-              {loading ? "Procesando..." : "Confirmar Reserva"}
-            </button>
-            <button
-              className="boton-cancelar-mp"
-              onClick={() => {
-                setMostrarReserva(false);
-                setErrorGlobal("");
-                setFieldErrors({});
-              }}
-              disabled={loading}
-            >
-              Cancelar
-            </button>
+            <div style={{display:'flex', flexDirection:'column', gap:'6px', marginTop:'16px', alignItems:'center', width:'100%'}}>
+              <button
+                className="boton-confirmar-reserva"
+                style={{width:'90%', padding:'14px 0', fontSize:'1.08em', fontWeight:'bold', borderRadius:'8px'}}
+                onClick={handleConfirmarReserva}
+                disabled={loading}
+              >
+                {loading ? "Procesando..." : "Confirmar Reserva"}
+              </button>
+                <button
+                  className="boton-cancelar-mp"
+                  style={{width:'90%', padding:'12px 0', fontSize:'1em', borderRadius:'8px', backgroundColor:'#c0392b', color:'#fff'}}
+                  onClick={() => {
+                    setMostrarReserva(false);
+                    setErrorGlobal("");
+                    setFieldErrors({});
+                  }}
+                  disabled={loading}
+                >
+                  Cancelar
+                </button>
+            </div>
             {errorGlobal && <p className="error-message-modal">{errorGlobal}</p>}
           </div>
         </div>
@@ -433,18 +488,7 @@ function CompraEntradas() {
             {loading ? "Procesando..." : "Pagar"}
           </button>
           
-          {success && (
-            <div className="success-wrap">
-              <div className="checkmark">
-                <svg viewBox="0 0 52 52">
-                  <path d="M14 27 l10 10 l18 -22" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <p className="success-message">{success}</p>
-              <p>Cantidad de entradas compradas: {cantidad}</p>
-              <p>Fecha de visita: {entradas[0]?.fecha_uso}</p>
-            </div>
-          )}
+          
         </>
       )}
     </div>
