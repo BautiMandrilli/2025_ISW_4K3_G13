@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./CompraEntradas.css";
 import "./Toast.css";
+import { useAuth } from "../context/AuthContext";
 
 function CompraEntradas() {
   // Precios
@@ -19,6 +20,7 @@ function CompraEntradas() {
   const [cantidad, setCantidad] = useState("1");
   const [entradas, setEntradas] = useState([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
   const [email, setEmail] = useState("");
+  const { user, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const MAX_ENTRADAS = 10;
@@ -78,13 +80,24 @@ function CompraEntradas() {
   };
 
   const resetForm = () => {
-    setEmail("");
+    // If user is logged in, keep their email as purchaser email; otherwise clear
+    setEmail(user?.email || "");
     setCantidad("1");
     setEntradas([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
     setFormaPago("efectivo");
     setErrorGlobal("");
     setFieldErrors({});
   };
+
+  // Keep email in sync with logged in user
+  useEffect(() => {
+    if (user && user.email) {
+      setEmail(user.email);
+    } else {
+      // only clear if email was previously empty or not coming from user
+      // don't override a manually typed email if user is not authenticated
+    }
+  }, [user]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -180,7 +193,7 @@ function CompraEntradas() {
       }, 5000);
 
       
-      setEmail("");
+  setEmail(user?.email || "");
       setCantidad("1");
       setEntradas([{ nombre: "", fecha_uso: "", edad: "", tipo: "regular" }]);
       setFormaPago("efectivo");
@@ -259,10 +272,12 @@ function CompraEntradas() {
                   setFieldErrors(prev => ({ ...prev, email: undefined }));
                 }
               }}
-              placeholder="ejemplo@correo.com"
+              placeholder={user?.email || "ejemplo@correo.com"}
+              disabled={isAuthenticated}
               className={fieldErrors.email ? 'input-error' : ''}
             />
             {fieldErrors.email && <p className="error-message-field">{fieldErrors.email}</p>}
+            {isAuthenticated && <p className="help-text">Usaremos el correo con el que iniciaste sesión: <strong>{user?.email}</strong></p>}
           </div>
 
           <div className="field">
