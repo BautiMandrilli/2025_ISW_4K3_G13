@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Configure axios to include auth token in all requests
   const setAuthToken = (token) => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -27,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Check if user is logged in on app start
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = localStorage.getItem('token');

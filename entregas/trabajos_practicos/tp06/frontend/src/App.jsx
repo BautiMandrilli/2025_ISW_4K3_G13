@@ -5,7 +5,6 @@ import AuthContainer from "./components/AuthContainer";
 import CompraEntradas from "./components/CompraEntradas";
 import Header from "./components/Header";
 
-// Component that handles conditional rendering based on auth status
 const AppContent = () => {
   const { isAuthenticated, loading } = useAuth();
 

@@ -17,7 +17,7 @@ transporter.verify()
 
     return transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: "pavonbenja@gmail.com", // tu mail de prueba
+      to: "pavonbenja@gmail.com",
       subject: "Prueba Nodemailer",
       text: "¡Funciona el envío de mails!",
     });
