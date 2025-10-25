@@ -99,6 +99,7 @@ Esto significa que la línea se establecerá antes de la finalización de la fec
 |--------------------|-----------------------|-----------------------------|
 | 2025-10-17         | Milagro Brizuela      | Línea base del TP4          |
 | 2025-10-17         | Milagro Brizuela      | Línea base del TP7          |
+| 2025-10-24         | Juan Patiño           | Línea base del TP6          |
 
 **Nota:**  Las líneas base del TP4 y TP7 constituyen una excepción al criterio actual. Inicialmente, se trabajó con un procedimiento de marcado de líneas base posterior a la fecha de finalización de la entrega de cada trabajo, pero posteriormente se decidió redefinir dicho criterio. A partir de los siguientes trabajos, todas las líneas base se marcarán antes de la finalización de la fecha de entrega de cada trabajo práctico evaluable.
 
