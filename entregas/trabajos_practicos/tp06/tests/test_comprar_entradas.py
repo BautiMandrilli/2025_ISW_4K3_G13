@@ -43,12 +43,22 @@ def comprar_entradas(usuario, fecha_visita, cantidad, edades, tipo_pase, forma_p
 
 def test_compra_exitosa_regular():
     usuario = "visitante_registrado"
-    fecha_visita = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
+    # Buscar una fecha que no sea lunes
+    dias = 1
+    while True:
+        fecha = datetime.now() + timedelta(days=dias)
+        if fecha.weekday() != 0:
+            break
+        dias += 1
+    fecha_visita = fecha.strftime("%Y-%m-%d")
+
     cantidad = 2
     edades = [20, 30]
     tipo_pase = "regular"
     forma_pago = "efectivo"
+
     resultado = comprar_entradas(usuario, fecha_visita, cantidad, edades, tipo_pase, forma_pago)
+
     assert resultado["estado"] == "ok"
     assert resultado["cantidad"] == 2
     assert resultado["total"] == 5000 * 2
@@ -174,14 +184,44 @@ def test_compra_sin_forma_pago():
     resultado = comprar_entradas(usuario, fecha_visita, cantidad, edades, tipo_pase, forma_pago)
     assert resultado["estado"] == "error"
     assert "forma de pago" in resultado["mensaje"].lower()
-
 def test_compra_sin_edades():
     usuario = "visitante_registrado"
-    fecha_visita = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
+    # Fecha válida que no sea lunes
+    dias = 1
+    while True:
+        fecha = datetime.now() + timedelta(days=dias)
+        if fecha.weekday() != 0:
+            break
+        dias += 1
+    fecha_visita = fecha.strftime("%Y-%m-%d")
+
     cantidad = 2
-    edades = [25]
+    edades = [25]  # menos edades que la cantidad
     tipo_pase = "regular"
     forma_pago = "efectivo"
+
     resultado = comprar_entradas(usuario, fecha_visita, cantidad, edades, tipo_pase, forma_pago)
+
     assert resultado["estado"] == "error"
     assert "edad" in resultado["mensaje"].lower()
+
+def test_mensaje_compra_exitosa():
+    usuario = "visitante_registrado"
+    # Fecha válida que no sea lunes
+    dias = 1
+    while True:
+        fecha = datetime.now() + timedelta(days=dias)
+        if fecha.weekday() != 0:
+            break
+        dias += 1
+    fecha_visita = fecha.strftime("%Y-%m-%d")
+
+    cantidad = 1
+    edades = [25]
+    tipo_pase = "VIP"
+    forma_pago = "tarjeta_credito"
+
+    resultado = comprar_entradas(usuario, fecha_visita, cantidad, edades, tipo_pase, forma_pago)
+
+    assert resultado["estado"] == "ok"
+    assert "compra realizada" in resultado["mensaje"].lower()
