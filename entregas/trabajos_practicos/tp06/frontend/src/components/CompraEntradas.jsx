@@ -419,11 +419,20 @@ function CompraEntradas() {
             <label htmlFor="cantidad">Cantidad de entradas</label>
             <input
               id="cantidad"
-              type="number"
-              step={1}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={cantidad}
               onChange={handleCantidadChange}
               className={fieldErrors.cantidad ? 'input-error' : ''}
+              onKeyDown={e => {
+                if (
+                  ["e", "E", ".", ","].includes(e.key) ||
+                  (!/^[0-9]$/.test(e.key) && e.key.length === 1)
+                ) {
+                  e.preventDefault();
+                }
+              }}
             />
             {fieldErrors.cantidad && <p className="error-message-field">{fieldErrors.cantidad}</p>}
           </div>
@@ -458,12 +467,26 @@ function CompraEntradas() {
               <div className="field">
                 <label>Edad del visitante</label>
                 <input
-                  type="number"
-                  min="0"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  min="1"
+                  max="120"
                   placeholder="Edad"
                   value={entrada.edad}
-                  onChange={(e) => handleEntradaChange(idx, "edad", e.target.value)}
+                  onChange={e => {
+                    let val = e.target.value.replace(/[^0-9]/g, "");
+                    // Permitir vacío o número entre 1 y 120
+                    if (val === "" || (parseInt(val) >= 1 && parseInt(val) <= 120)) {
+                      handleEntradaChange(idx, "edad", val);
+                    }
+                  }}
                   className={fieldErrors[`entrada_${idx}_edad`] ? 'input-error' : ''}
+                  onKeyDown={e => {
+                    if (["e", "E", ".", ",", "-", "+", "*", "/"].includes(e.key) || (!/^[0-9]$/.test(e.key) && e.key.length === 1)) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
                 {fieldErrors[`entrada_${idx}_edad`] && <p className="error-message-field">{fieldErrors[`entrada_${idx}_edad`]}</p>}
               </div>
