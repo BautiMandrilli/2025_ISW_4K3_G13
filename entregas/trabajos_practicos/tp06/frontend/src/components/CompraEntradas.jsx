@@ -341,7 +341,7 @@ function CompraEntradas() {
                 <tr style={{background:'#f2f6fa'}}>
                   <th style={{padding:'6px', borderRadius:'4px'}}>Nombre</th>
                   <th style={{padding:'6px'}}>Tipo</th>
-                  <th style={{padding:'6px'}}>Edad</th>
+                  <th style={{padding:'6px'}}>Edad</th> 
                   <th style={{padding:'6px'}}>Fecha</th>
                   <th style={{padding:'6px'}}>Precio</th>
                 </tr>
